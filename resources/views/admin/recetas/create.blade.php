@@ -1,0 +1,18 @@
+@extends('layouts.admin')
+
+@section('title', 'Nueva receta · Admin · ' . config('app.name'))
+@section('heading', 'Nueva receta')
+
+@section('content')
+@if ($errors->any())
+    <div class="alert-error" style="max-width:900px;margin:0 auto 16px">
+        <ul style="margin:0;padding-left:16px">
+            @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+        </ul>
+    </div>
+@endif
+@include('admin.recetas._form', [
+    'action' => route('admin.recetas.store'),
+    'submit' => 'Guardar receta',
+])
+@endsection
