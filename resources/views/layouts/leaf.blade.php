@@ -26,13 +26,14 @@
                 </a>
             </div>
 
-            <div class="search-wrap" style="position:relative">
+            <form action="{{ route('buscar') }}" method="GET" class="search-wrap" style="position:relative" x-on:submit="open=false">
                 <i class="fas fa-search"></i>
                 <input
                     type="text"
+                    name="q"
                     x-model="q"
                     x-on:input.debounce.300ms="buscar()"
-                    x-on:keydown.escape="results=[]"
+                    x-on:keydown.escape="open=false"
                     placeholder="Buscar planta, receta, animal, síntoma…"
                     autocomplete="off"
                 >
@@ -42,23 +43,35 @@
                     <template x-for="(grupo, clave) in results" :key="clave">
                         <div class="search-group">
                             <div class="search-group-title" x-text="clave"></div>
-                            <a x-for="item in grupo" :key="item.tipo + item.url"
-                               :href="item.url" class="search-item">
-                                <i class="fas fa-circle" style="font-size:.45rem"></i>
-                                <div>
-                                    <div x-text="item.titulo"></div>
-                                    <small x-show="item.sub" x-text="item.sub"></small>
-                                </div>
-                            </a>
+                            <template x-for="item in grupo" :key="item.tipo + item.url">
+                                <a :href="item.url" class="search-item">
+                                    <i class="fas fa-circle" style="font-size:.45rem"></i>
+                                    <div>
+                                        <div class="search-item-title" x-text="item.titulo"></div>
+                                        <small x-show="item.sub" x-text="item.sub"></small>
+                                    </div>
+                                </a>
+                            </template>
                         </div>
                     </template>
                     <div x-show="Object.keys(results).length === 0 && q.length" class="search-empty">
                         Sin resultados para «<span x-text="q"></span>»
                     </div>
+                    <div class="search-footer" x-show="q.length">
+                        <a :href="'{{ route('buscar') }}?q=' + encodeURIComponent(q)" class="search-footer-link">
+                            <i class="fas fa-search"></i> Ver todos los resultados
+                        </a>
+                        <a href="{{ route('tratamientos.index') }}" class="search-footer-link">
+                            <i class="fas fa-heartbeat"></i> Tratamientos
+                        </a>
+                    </div>
                 </div>
-            </div>
+            </form>
 
             <div class="hdr-right">
+                <a href="{{ route('tratamientos.index') }}" class="btn-hdr">
+                    <i class="fas fa-heartbeat"></i> Tratamientos
+                </a>
                 <button class="theme-btn" id="theme-btn" title="Claro / Oscuro">
                     <i class="fas fa-moon"></i>
                 </button>

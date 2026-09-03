@@ -43,7 +43,7 @@
 
                 <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
                     @if ($planta->modelos3d->isNotEmpty())
-                        <a href="#panel-3d" class="btn btn-primary"><i class="fas fa-cube"></i> Ver en 3D</a>
+                        <a href="#panel-3d" class="btn btn-primary" onclick="event.preventDefault(); document.querySelector('[data-tab=3d]')?.click(); document.getElementById('panel-3d')?.scrollIntoView({behavior:'smooth'})"><i class="fas fa-cube"></i> Ver en 3D</a>
                     @endif
                     <a href="{{ route('aportes.create', ['planta_id' => $planta->id]) }}" class="btn btn-dorado btn-sm"
                        @guest onclick="event.preventDefault();window.location='{{ route('login') }}'" @endguest>
@@ -178,6 +178,12 @@
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         const panel = document.getElementById('panel-' + tab);
         if (panel) panel.classList.add('active');
+
+        if (tab === '3d') {
+            if (typeof window.inicializarVisor3D === 'function') {
+                window.inicializarVisor3D();
+            }
+        }
     }
 </script>
 @endpush

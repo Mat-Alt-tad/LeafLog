@@ -9,7 +9,7 @@ class Modelo3d extends Model
 {
     protected $table = 'modelos_3d';
 
-    protected $fillable = ['planta_id', 'archivo_glb', 'tipo', 'fecha_subida'];
+    protected $fillable = ['planta_id', 'archivo_glb', 'tipo', 'contenido_tipo', 'fecha_subida'];
 
     protected $casts = [
         'fecha_subida' => 'datetime',
