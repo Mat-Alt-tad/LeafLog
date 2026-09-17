@@ -6,12 +6,14 @@ use App\Models\Animal;
 use App\Models\Aporte;
 use App\Models\Categoria;
 use App\Models\Comentario;
+use App\Models\Modelo3d;
 use App\Models\Planta;
 use App\Models\Receta;
 use App\Models\Subtema;
 use App\Models\Tratamiento;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
@@ -197,6 +199,23 @@ class DatabaseSeeder extends Seeder
             $planta = Planta::create(array_merge(['subtema_id' => $subtemaId], $data));
             $planta->categorias()->sync($categorias);
             $created[] = $planta;
+        }
+
+        // ── Modelo 3D de la Sábila ────────────────────────────────────────────
+        $sabila = $created[0];
+        $glbOrigen = public_path('models/3d/aloe_vera_plant.glb');
+        $glbDestino = storage_path('app/public/modelos/aloe_vera_plant.glb');
+        if ($sabila->nombre === 'Sábila' && File::exists($glbOrigen)) {
+            File::ensureDirectoryExists(dirname($glbDestino));
+            File::copy($glbOrigen, $glbDestino);
+
+            Modelo3d::create([
+                'planta_id' => $sabila->id,
+                'archivo_glb' => 'modelos/aloe_vera_plant.glb',
+                'tipo' => 'glb',
+                'contenido_tipo' => 'glb',
+                'fecha_subida' => now(),
+            ]);
         }
 
         // ── Recetas ───────────────────────────────────────────────────────────
