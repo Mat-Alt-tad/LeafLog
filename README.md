@@ -1,61 +1,74 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LeafLog
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+LeafLog es un prototipo de plataforma digital para catalogar plantas medicinales y preservar los saberes etnobotánicos de la zona rural de Fusagasugá. El sistema conecta plantas con recetas, medicina tradicional y alimentación animal, e incluye un visor 3D con efecto Pepper's Ghost en modos caja y pirámide.
 
-## About Laravel
+## Requisitos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3 o superior (probado con PHP 8.5).
+- Composer.
+- Node.js 20 o superior.
+- MySQL/MariaDB o SQLite.
+- Extensiones PHP habituales de Laravel (`pdo`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalación
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/Mat-Alt-tad/LeafLog.git
+cd LeafLog
+composer install
+cp .env.example .env
+php artisan key:generate
+# configurar DB_HOST, DB_DATABASE, DB_USERNAME y DB_PASSWORD en .env
+php artisan migrate --seed
+npm install
+npm run build
+php artisan storage:link
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+La aplicación queda disponible en `http://127.0.0.1:8000`.
 
-## Contributing
+## Modelos 3D
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+El seeder copia a `storage/app/public/modelos/` los cinco modelos optimizados que están en `public/models/3d/`:
 
-## Code of Conduct
+- `sabila.glb`
+- `menta.glb`
+- `manzanilla.glb`
+- `eucalipto.glb`
+- `limoncillo.glb`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Fueron generados con TRELLIS.2 de Microsoft Research a partir de imágenes, convertidos con `trimesh` y optimizados con `gltf-transform` (simplificación, cuantización y texturas WebP). Los archivos finales pesan entre 3,65 MB y 8,08 MB.
 
-## Security Vulnerabilities
+El visor usa Three.js y carga GLB estándar. Las versiones optimizadas conservan la extensión `KHR_mesh_quantization`, soportada por `GLTFLoader`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Ruda y Albahaca tienen imagen de referencia, pero sus modelos 3D quedan pendientes.
 
-## License
+## Pruebas
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# Tesis
-# Tesis
-# LeafLog
+```bash
+php artisan test
+```
+
+La suite cubre autenticación, perfil, rutas principales, catálogo, búsqueda y flujos críticos. La evidencia de la ejecución de sustentación está en `documentacion/evidencias/pruebas-2026-10-22.txt`.
+
+## Estructura
+
+- `app/Http/Controllers`: controladores de catálogo, búsqueda, administración y visor.
+- `app/Models`: modelos Eloquent.
+- `database/migrations`: esquema relacional.
+- `database/seeders`: datos de demostración y asociación de los modelos 3D.
+- `resources/js/visor.js`: visor Three.js.
+- `resources/views`: vistas Blade.
+- `public/models/3d`: GLB optimizados.
+- `tests`: suite Pest.
+
+## Versión evaluada
+
+La versión de sustentación se identifica con la etiqueta `v1.0-sustentacion`. El README y los modelos forman parte de esa versión.
+
+## Autoría
+
+Trabajo de grado de Mateo Venegas Solano, Programa de Ingeniería de Sistemas y Computación, Universidad de Cundinamarca, Sede Fusagasugá.
+
+Director: Daniel Alejandro Moncada Beltrán. Codirector: Gustavo Andrés Rodríguez Méndez.

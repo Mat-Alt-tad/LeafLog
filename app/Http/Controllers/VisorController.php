@@ -51,7 +51,9 @@ class VisorController extends Controller
         $path = $request->file('archivo_glb')->store('modelos', 'public');
 
         $tipoInput = strtolower($request->input('tipo', 'glb'));
-        if ($tipoInput === 'fotogrametria') {
+        if ($tipoInput === 'trellis' || $tipoInput === 'ia') {
+            $tipo = 'trellis';
+        } elseif ($tipoInput === 'fotogrametria') {
             $tipo = 'fotogrametria';
         } elseif ($tipoInput === 'diseño' || $tipoInput === 'diseno' || $tipoInput === '3d') {
             $tipo = 'diseño';

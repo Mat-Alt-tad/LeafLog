@@ -29,23 +29,29 @@
                 <input type="text" name="q" placeholder="Buscar planta, receta, animal, síntoma…" autocomplete="off">
             </form>
 
-            <div class="hdr-right">
-                <button class="theme-btn" id="theme-btn" title="Claro / Oscuro">
-                    <i class="fas fa-moon"></i>
+            <div class="hdr-right" x-data="{ open: false }">
+                <button type="button" class="theme-btn mobile-only" @click="open = !open" aria-label="Menú">
+                    <i class="fas fa-bars"></i>
                 </button>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="btn-hdr">
-                        <i class="fas fa-th-large"></i> Panel
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}" style="display:inline">
-                        @csrf
-                        <button type="submit" class="btn-hdr"><i class="fas fa-sign-out-alt"></i> Salir</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="btn-hdr btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Ingresar
-                    </a>
-                @endauth
+
+                <div class="hdr-menu" :class="{ 'open': open }" @click.outside="open = false">
+                    <button class="theme-btn" id="theme-btn" title="Claro / Oscuro">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="btn-hdr">
+                            <i class="fas fa-th-large"></i> <span>Panel</span>
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" style="display:inline">
+                            @csrf
+                            <button type="submit" class="btn-hdr"><i class="fas fa-sign-out-alt"></i> <span>Salir</span></button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="btn-hdr btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> <span>Ingresar</span>
+                        </a>
+                    @endauth
+                </div>
             </div>
         </header>
 

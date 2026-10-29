@@ -39,8 +39,12 @@
             </div>
         </header>
 
-        <div class="admin-wrap">
-            <aside class="admin-sidebar">
+        <div class="admin-wrap" x-data="{ sidebarOpen: false }">
+            <button type="button" class="theme-btn mobile-only admin-menu-toggle" @click="sidebarOpen = !sidebarOpen" aria-label="Menú de administración">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <aside class="admin-sidebar" :class="{ 'open': sidebarOpen }" @click.outside="sidebarOpen = false">
                 <div class="brand"><i class="fas fa-leaf"></i> LeafLog</div>
                 <nav class="admin-nav">
                     <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">

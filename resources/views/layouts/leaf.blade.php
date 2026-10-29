@@ -68,27 +68,33 @@
                 </div>
             </form>
 
-            <div class="hdr-right">
-                <a href="{{ route('tratamientos.index') }}" class="btn-hdr">
-                    <i class="fas fa-heartbeat"></i> Tratamientos
-                </a>
-                <button class="theme-btn" id="theme-btn" title="Claro / Oscuro">
-                    <i class="fas fa-moon"></i>
+            <div class="hdr-right" x-data="{ open: false }">
+                <button type="button" class="theme-btn mobile-only" @click="open = !open" aria-label="Menú">
+                    <i class="fas fa-bars"></i>
                 </button>
-                @auth
-                    @if(auth()->user()->hasAnyRole(['admin', 'moderador']))
-                        <a href="{{ route('admin.dashboard') }}" class="btn-hdr">
-                            <i class="fas fa-th-large"></i> Admin
+
+                <div class="hdr-menu" :class="{ 'open': open }" @click.outside="open = false">
+                    <a href="{{ route('tratamientos.index') }}" class="btn-hdr">
+                        <i class="fas fa-heartbeat"></i> <span>Tratamientos</span>
+                    </a>
+                    <button class="theme-btn" id="theme-btn" title="Claro / Oscuro">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    @auth
+                        @if(auth()->user()->hasAnyRole(['admin', 'moderador']))
+                            <a href="{{ route('admin.dashboard') }}" class="btn-hdr">
+                                <i class="fas fa-th-large"></i> <span>Admin</span>
+                            </a>
+                        @endif
+                        <a href="{{ route('dashboard') }}" class="btn-hdr">
+                            <i class="fas fa-user"></i> <span>{{ auth()->user()->name }}</span>
                         </a>
-                    @endif
-                    <a href="{{ route('dashboard') }}" class="btn-hdr">
-                        <i class="fas fa-user"></i> {{ auth()->user()->name }}
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="btn-hdr btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Ingresar
-                    </a>
-                @endauth
+                    @else
+                        <a href="{{ route('login') }}" class="btn-hdr btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> <span>Ingresar</span>
+                        </a>
+                    @endauth
+                </div>
             </div>
         </header>
 

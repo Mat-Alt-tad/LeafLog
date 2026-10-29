@@ -12,7 +12,7 @@
                 <img src="{{ asset('storage/' . $planta->img_path) }}" alt="{{ $planta->nombre }}"
                      style="width:280px;height:280px;object-fit:cover;border-radius:var(--radio);box-shadow:var(--sombra)">
             @else
-                <div style="width:280px;height:280px;background:var(--pale);border-radius:var(--radio);display:flex;align-items:center;justify-content:center;color:var(--verde-mid)">
+                <div class="img-placeholder" style="width:280px;height:280px;background:var(--pale);border-radius:var(--radio);display:flex;align-items:center;justify-content:center;color:var(--verde-mid)">
                     <i class="fas fa-leaf" style="font-size:4rem"></i>
                 </div>
             @endif

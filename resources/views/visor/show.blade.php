@@ -1,7 +1,7 @@
 @php
     $modelosGlb = $modelos->filter(fn($m) => $m->contenido_tipo === 'glb');
     $modeloImgs = $modelos->firstWhere('contenido_tipo', 'imagenes');
-    $primerGlb = $modelosGlb->first();
+    $primerGlb = $modelosGlb->sortByDesc('fecha_subida')->first();
     $primerUrl = $primerGlb ? asset('storage/' . $primerGlb->archivo_glb) : null;
     $imagenesRutas = $modeloImgs ? json_decode($modeloImgs->archivo_glb, true) : null;
     $imagenesUrls = $imagenesRutas ? array_map(fn($r) => asset('storage/' . $r), $imagenesRutas) : null;
@@ -84,6 +84,7 @@
             <label>Origen</label>
             <select name="tipo" class="form-control">
                 <option value="glb">Modelo 3D (diseño directo)</option>
+                <option value="trellis">TRELLIS.2 (IA)</option>
                 <option value="fotogrametria">Fotogrametría</option>
             </select>
         </div>
@@ -119,7 +120,6 @@
 </div>
 @endcan
 
-@push('scripts')
 <script>
 function toggleFullscreen() {
     const wrap = document.getElementById('visor-wrap');
@@ -202,4 +202,3 @@ document.addEventListener('DOMContentLoaded', () => {
     if (panel.classList.contains('active')) window.inicializarVisor3D();
 });
 </script>
-@endpush

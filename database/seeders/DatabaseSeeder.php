@@ -201,21 +201,40 @@ class DatabaseSeeder extends Seeder
             $created[] = $planta;
         }
 
-        // ── Modelo 3D de la Sábila ────────────────────────────────────────────
-        $sabila = $created[0];
-        $glbOrigen = public_path('models/3d/aloe_vera_plant.glb');
-        $glbDestino = storage_path('app/public/modelos/aloe_vera_plant.glb');
-        if ($sabila->nombre === 'Sábila' && File::exists($glbOrigen)) {
+        // ── Modelos 3D generados con TRELLIS.2 ────────────────────────────────
+        // Los GLB optimizados viven en public/models/3d y se copian al disco
+        // público para que el visor los sirva desde /storage/modelos/.
+        $modelosTrellis = [
+            'Sábila' => 'sabila.glb',
+            'Menta' => 'menta.glb',
+            'Manzanilla' => 'manzanilla.glb',
+            'Eucalipto' => 'eucalipto.glb',
+            'Limoncillo' => 'limoncillo.glb',
+        ];
+
+        foreach ($modelosTrellis as $nombrePlanta => $archivo) {
+            $planta = Planta::where('nombre', $nombrePlanta)->first();
+            $glbOrigen = public_path('models/3d/' . $archivo);
+            $glbDestino = storage_path('app/public/modelos/' . $archivo);
+
+            if (!$planta || !File::exists($glbOrigen)) {
+                continue;
+            }
+
             File::ensureDirectoryExists(dirname($glbDestino));
             File::copy($glbOrigen, $glbDestino);
 
-            Modelo3d::create([
-                'planta_id' => $sabila->id,
-                'archivo_glb' => 'modelos/aloe_vera_plant.glb',
-                'tipo' => 'glb',
-                'contenido_tipo' => 'glb',
-                'fecha_subida' => now(),
-            ]);
+            Modelo3d::firstOrCreate(
+                [
+                    'planta_id' => $planta->id,
+                    'archivo_glb' => 'modelos/' . $archivo,
+                ],
+                [
+                    'tipo' => 'trellis',
+                    'contenido_tipo' => 'glb',
+                    'fecha_subida' => now(),
+                ]
+            );
         }
 
         // ── Recetas ───────────────────────────────────────────────────────────

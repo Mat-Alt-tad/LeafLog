@@ -35,13 +35,14 @@ function getModelBounds(obj) {
     return Math.max(size.x, size.y, size.z, 0.1);
 }
 
-/* ---------- pirámide GLB: 4 clones en cruz, espejados, top hacia el centro ---------- */
+/* ---------- pirámide GLB: 4 clones en cruz, orientados hacia afuera ---------- */
 function buildPyramidClones(model) {
     clearPyramid();
 
     const group = new THREE.Group();
     const maxDim = getModelBounds(model);
-    const dist = maxDim * 0.85 + 0.6;
+    // Separamos más los clones para dejar el centro completamente vacío.
+    const dist = maxDim * 1.2 + 1.0;
 
     for (let i = 0; i < 4; i++) {
         const clone = SkeletonUtils.clone(model);
@@ -60,7 +61,9 @@ function buildPyramidClones(model) {
         const wrap = new THREE.Group();
         wrap.add(clone);
         wrap.rotation.x = -Math.PI / 2;
-        wrap.scale.x *= -1;
+        // Orientación hacia afuera para que, al mirar la pantalla directamente,
+        // las caras interiores no proyecten hacia el centro.
+        wrap.scale.x *= 1;
         pivot.add(wrap);
         group.add(pivot);
     }
@@ -76,7 +79,7 @@ function clearPyramid() {
     state.pyramidGroup = null;
 }
 
-/* ---------- pirámide imágenes: 4 planos estáticos en cruz ---------- */
+/* ---------- pirámide imágenes: 4 planos estáticos en cruz, orientados hacia afuera ---------- */
 function buildImagePyramid(rutas) {
     clearImageGroup();
 
@@ -87,15 +90,17 @@ function buildImagePyramid(rutas) {
 
     if (total === 0) return;
 
-    const dist = 1.35;
+    // Alejamos los planos del centro para dejar una zona central vacía.
+    const dist = 2.0;
 
     rutas.slice(0, 4).forEach((ruta, i) => {
         if (!ruta) return;
         const url = ruta.startsWith('http') ? ruta : window.location.origin + '/' + ruta;
         loader.load(url, (texture) => {
             texture.colorSpace = THREE.SRGBColorSpace;
-            const geo = new THREE.PlaneGeometry(1.7, 1.7);
-            const mat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+            // Planos más pequeños para evitar que se solapen en el centro.
+            const geo = new THREE.PlaneGeometry(1.2, 1.2);
+            const mat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.FrontSide });
             const mesh = new THREE.Mesh(geo, mat);
 
             const angle = (Math.PI / 2) * i;
@@ -104,7 +109,8 @@ function buildImagePyramid(rutas) {
             pivot.position.set(Math.sin(angle) * dist, 0, Math.cos(angle) * dist);
             pivot.add(mesh);
             mesh.rotation.x = -Math.PI / 2;
-            pivot.scale.x = -1;
+            // Orientación hacia afuera.
+            pivot.scale.x = 1;
 
             group.add(pivot);
             loaded++;
@@ -147,7 +153,17 @@ function applyMode(mode) {
     const isPyramid = mode === 'piramide';
     const useImages = isPyramid && state.pyramidTipo === 'imagenes';
 
-    if (state.model) state.model.visible = !isPyramid;
+    // En modo pirámide removemos el modelo central de la escena para evitar
+    // que aparezca en el centro; en modo caja lo volvemos a agregar.
+    if (state.model) {
+        if (isPyramid) {
+            if (state.model.parent) state.scene.remove(state.model);
+        } else {
+            if (!state.model.parent) state.scene.add(state.model);
+        }
+        state.model.visible = !isPyramid;
+    }
+
     if (state.pyramidGroup) state.pyramidGroup.visible = isPyramid && !useImages;
     if (state.imageGroup) state.imageGroup.visible = useImages;
 
